@@ -36,6 +36,10 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            # Create volume directory with proper permissions
+            sudo mkdir -p /opt/medium-plan/postgres-data
+            sudo chown -R 1000:1000 /opt/medium-plan/postgres-data
+            sudo chmod -R 755 /opt/medium-plan
             cd /home/ubuntu/app
             docker-compose -f docker-compose.yml down
             docker-compose -f docker-compose.yml up -d --build
