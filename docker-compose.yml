@@ -14,7 +14,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.5"
+          cpus: "0.3"
           memory: 512M
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
@@ -37,7 +37,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1.0"
+          cpus: "0.5"
           memory: 1G
     restart: unless-stopped
 
@@ -54,8 +54,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1.5"
-          memory: 1.5G
+          cpus: "0.2"
+          memory: 512M
     restart: unless-stopped
 
 volumes:
