@@ -1,8 +1,10 @@
-version: '3.8'
+version: "3.8"
 
 services:
   postgres:
     image: postgres:15-alpine
+    env_file: 
+      - ./backend/.env
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -12,7 +14,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 512M
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
@@ -22,22 +24,27 @@ services:
 
   backend:
     build: ./backend
+    env_file:
+      - ./backend/.env
     depends_on:
       postgres:
         condition: service_healthy
     environment:
-      DATABASE_URL: "postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}"
+      DB_HOST: "postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}"
+      FRONTEND_DOMAIN: "http://localhost:3000"
     ports:
       - "8000:8000"
     deploy:
       resources:
         limits:
-          cpus: '1.0'
+          cpus: "1.0"
           memory: 1G
     restart: unless-stopped
 
   frontend:
     build: ./frontend
+    env_file:
+      - ./frontend/.env
     depends_on:
       - backend
     environment:
@@ -47,7 +54,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1.0'
+          cpus: "1.5"
           memory: 1.5G
     restart: unless-stopped
 
