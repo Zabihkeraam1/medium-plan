@@ -2,6 +2,8 @@ version: "3.8"
 
 services:
   postgres:
+    networks:
+      - app-network
     image: postgres:15-alpine
     environment:
       POSTGRES_USER: "${DB_USER}"
@@ -22,6 +24,8 @@ services:
           memory: 512M
 
   backend:
+    networks:
+      - app-network
     build: ./backend
     env_file:
       - ./backend/.env
@@ -33,6 +37,11 @@ services:
       FRONTEND_DOMAIN: "http://54.236.65.244:3000"
     ports:
       - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     deploy:
       resources:
         limits:
@@ -41,6 +50,8 @@ services:
     restart: unless-stopped
 
   frontend:
+    networks:
+      - app-network
     build: ./frontend
     env_file:
       - ./frontend/.env
@@ -48,6 +59,8 @@ services:
       - backend
     environment:
       NEXT_PUBLIC_API_URL: "http://54.236.65.244:8000"
+      # NEXT_PUBLIC_API_URL: "http://backend:8000" # For internal communication
+      # NEXT_PUBLIC_EXTERNAL_API_URL: "http://${HOST_IP}:8000" # For browser access
     ports:
       - "3000:3000"
     deploy:
@@ -64,3 +77,6 @@ volumes:
       type: none
       device: /opt/medium-plan/postgres-data
       o: bind
+networks:
+  app-network:
+    driver: bridge
