@@ -42,8 +42,8 @@ jobs:
             sudo chmod -R 755 /opt/medium-plan
             ls -la frontend/ backend/
             # Set proper permissions (read-only for owner)
-            sudo chmod -R 400 frontend/.env
-            sudo chmod -R 400 backend/.env
+            sudo chmod 644 frontend/.env
+            sudo chmod 644 backend/.env
             cd /home/ubuntu/app
             docker-compose -f docker-compose.yml down
             docker-compose -f docker-compose.yml up -d --build
