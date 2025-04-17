@@ -30,6 +30,7 @@ services:
         condition: service_healthy
     environment:
       DB_HOST: "postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}"
+      FRONTEND_DOMAIN: "http://54-236-65-244:3000"
     ports:
       - "8000:8000"
     deploy:
@@ -46,7 +47,7 @@ services:
     depends_on:
       - backend
     environment:
-      NEXT_PUBLIC_API_URL: "http://localhost:8000"
+      NEXT_PUBLIC_API_URL: "http://54-236-65-244:8000"
     ports:
       - "3000:3000"
     deploy:
