@@ -3,24 +3,23 @@ version: "3.8"
 services:
   postgres:
     image: postgres:15-alpine
-    env_file: 
-      - ./backend/.env
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: "${DB_NAME}"
+      POSTGRES_INITDB_ARGS: "--auth=scram-sha-256"  # Ensures secure auth
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    deploy:
-      resources:
-        limits:
-          cpus: "0.3"
-          memory: 512M
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 5s
       timeout: 5s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
 
   backend:
     build: ./backend
@@ -30,14 +29,13 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      DB_HOST: "postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}"
-      FRONTEND_DOMAIN: "http://localhost:3000"
+      DATABASE_URL: "postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}"
     ports:
       - "8000:8000"
     deploy:
       resources:
         limits:
-          cpus: "0.5"
+          cpus: "1.0"
           memory: 1G
     restart: unless-stopped
 
@@ -54,8 +52,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.2"
-          memory: 512M
+          cpus: "1.5"
+          memory: 1.5G
     restart: unless-stopped
 
 volumes:
