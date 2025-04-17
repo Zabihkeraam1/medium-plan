@@ -40,6 +40,7 @@ jobs:
             sudo mkdir -p /opt/medium-plan/postgres-data
             sudo chown -R 1000:1000 /opt/medium-plan/postgres-data
             sudo chmod -R 755 /opt/medium-plan
+            sudo chmod +x ./init-db.sh
             ls -la frontend/ backend/
             # Set proper permissions (read-only for owner)
             sudo chmod 644 frontend/.env
