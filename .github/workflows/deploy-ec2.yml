@@ -29,6 +29,7 @@ jobs:
           source: "devops/craftapp.conf"
           target: "/home/ubuntu/"
           strip_components: 1
+          tar_tmp_path: ""
 
       - name: Move nginx config with sudo
         uses: appleboy/ssh-action@master
