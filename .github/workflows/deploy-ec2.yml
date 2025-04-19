@@ -50,7 +50,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "./"
-          target: "/home/ubuntu/app"
+          target: "/home/ubuntu/app/medium-plan"
 
       # - name: Install Docker Compose and deploy
       #   uses: appleboy/ssh-action@master
@@ -85,7 +85,7 @@ jobs:
             sudo chown -R 1000:1000 /opt/medium-plan/postgres-data
             sudo chmod -R 755 /opt/medium-plan
             # Set secure permissions for .env files
-            cd /home/ubuntu/app
+            cd /home/ubuntu/app/medium-plan
             sudo chmod +x init-db.sh
             sudo chmod 644 frontend/.env
             sudo chmod 644 backend/.env
@@ -96,6 +96,4 @@ jobs:
             
             # Wait for PostgreSQL to initialize
             sleep 10
-            
-            # Verify services are running
-            docker ps --filter "name=medium-plan" --format "table {{.Names}}\t{{.Status}}" | grep "Up"
+            docker-compose exec postgres sh /docker-entrypoint-initdb.d/init-db.sh
