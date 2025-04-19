@@ -52,22 +52,59 @@ jobs:
           source: "./"
           target: "/home/ubuntu/app/medium-plan"
 
-      - name: Install Docker Compose and deploy
+      # - name: Install Docker Compose and deploy
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     host: ${{ secrets.EC2_INSTANCE_IP }}
+      #     username: ubuntu
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     script: |
+      #       # Create volume directory with proper permissions
+      #       sudo mkdir -p /opt/medium-plan/postgres-data
+      #       sudo chown -R 1000:1000 /opt/medium-plan/postgres-data
+      #       sudo chmod -R 755 /opt/medium-plan
+      #       cd /home/ubuntu/app/medium-plan
+      #       sudo chmod +x ./init-db.sh
+      #       ls -la frontend/ backend/
+      #       # Set proper permissions (read-only for owner)
+      #       sudo chmod 644 frontend/.env
+      #       sudo chmod 644 backend/.env
+      #       docker-compose -f docker-compose.yml down
+      #       docker-compose -f docker-compose.yml up -d --build
+
+      - name: Deploy application
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_INSTANCE_IP }}
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # Create volume directory with proper permissions
+            set -e  # Exit immediately if any command fails
+            
+            # Fix init-db.sh host reference
+            sed -i 's/localhost/postgres/g' /home/ubuntu/app/medium-plan/init-db.sh
+            chmod +x /home/ubuntu/app/medium-plan/init-db.sh
+            
+            # Setup database directory
             sudo mkdir -p /opt/medium-plan/postgres-data
             sudo chown -R 1000:1000 /opt/medium-plan/postgres-data
             sudo chmod -R 755 /opt/medium-plan
+            
+            # Set secure permissions for .env files
             cd /home/ubuntu/app/medium-plan
-            sudo chmod +x ./init-db.sh
-            ls -la frontend/ backend/
-            # Set proper permissions (read-only for owner)
-            sudo chmod 644 frontend/.env
-            sudo chmod 644 backend/.env
-            docker-compose -f docker-compose.yml down
+            sudo chmod 644 frontend/.env backend/.env
+            
+            # Clean up and deploy
+            docker-compose -f docker-compose.yml down || true
+            docker system prune -f
             docker-compose -f docker-compose.yml up -d --build
+            
+            # Wait for PostgreSQL to initialize
+            sleep 10
+            
+            # Verify database setup
+            docker-compose exec postgres psql -U postgres -c "\du" | grep myuser || \
+              docker-compose exec postgres sh /docker-entrypoint-initdb.d/init-db.sh
+            
+            # Verify services are running
+            docker ps --filter "name=medium-plan" --format "table {{.Names}}\t{{.Status}}" | grep "Up"
