@@ -81,30 +81,27 @@ jobs:
           script: |
             set -e  # Exit immediately if any command fails
             
-            # Fix init-db.sh host reference
-            sed -i 's/localhost/postgres/g' /home/ubuntu/app/medium-plan/init-db.sh
-            chmod +x /home/ubuntu/app/medium-plan/init-db.sh
-            
-            # Setup database directory
-            sudo mkdir -p /opt/medium-plan/postgres-data
-            sudo chown -R 1000:1000 /opt/medium-plan/postgres-data
-            sudo chmod -R 755 /opt/medium-plan
-            
             # Set secure permissions for .env files
             cd /home/ubuntu/app/medium-plan
             sudo chmod 644 frontend/.env backend/.env
-            
-            # Clean up and deploy
-            docker-compose -f docker-compose.yml down || true
+            cp backend/.env .
+            cp frontend/.env frontend/
+            # Fix init-db.sh host reference
+            sed -i 's/localhost/postgres/g' init-db.sh
+            chmod +x init-db.sh
+
+            # Setup database directory
+            sudo mkdir -p /opt/medium-plan/postgres-data
+            sudo mkdir -p /opt/medium-plan/postgres-data
+            sudo chown -R 1000:1000 /opt/medium-plan/postgres-data
+            sudo chmod -R 755 /opt/medium-plan
+            # Clean up and deploy with explicit env file
+            docker-compose --env-file backend/.env down || true
             docker system prune -f
-            docker-compose -f docker-compose.yml up -d --build
+            docker-compose --env-file backend/.env up -d --build
             
             # Wait for PostgreSQL to initialize
             sleep 10
-            
-            # Verify database setup
-            docker-compose exec postgres psql -U postgres -c "\du" | grep myuser || \
-              docker-compose exec postgres sh /docker-entrypoint-initdb.d/init-db.sh
             
             # Verify services are running
             docker ps --filter "name=medium-plan" --format "table {{.Names}}\t{{.Status}}" | grep "Up"
