@@ -72,7 +72,7 @@ jobs:
             # Clean up and deploy with explicit env file
             docker-compose --env-file backend/.env down || true
             docker system prune -f
-            docker-compose --env-file backend/.env up -d --build
+            docker-compose --env-file backend/.env up -d --build --no-cache
             
             # Wait for PostgreSQL to initialize
             sleep 10
