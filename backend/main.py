@@ -6,7 +6,8 @@ import asyncpg
 import asyncio
 import ssl
 # Load environment variables
-load_dotenv()
+# load_dotenv()
+load_dotenv(dotenv_path="/app/.env")
 
 # Connect to the database
 async def connect_db():
