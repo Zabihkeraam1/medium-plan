@@ -5,10 +5,16 @@ services:
     networks:
       - app-network
     image: postgres:15-alpine
+    # environment:
+    #   POSTGRES_USER: "${DB_USER}"
+    #   POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    #   POSTGRES_DB: "${DB_NAME}"
     environment:
-      POSTGRES_USER: "${DB_USER}"
-      POSTGRES_PASSWORD: "${DB_PASSWORD}"
-      POSTGRES_DB: "${DB_NAME}"
+      POSTGRES_ADMIN_USER: postgres
+      POSTGRES_ADMIN_PASSWORD: postgrespassword
+      POSTGRES_APP_USER: myuser
+      POSTGRES_APP_PASSWORD: mypassword
+      POSTGRES_APP_DB: mydb
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
