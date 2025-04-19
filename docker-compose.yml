@@ -34,9 +34,9 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    environment:
-      DB_HOST: "postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}"
-      FRONTEND_DOMAIN: "http://54.236.65.244:3000"
+    # environment:
+    #   DB_HOST: "postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}"
+    #   FRONTEND_DOMAIN: "http://54.236.65.244:3000"
     ports:
       - "8000:8000"
     healthcheck:
@@ -59,8 +59,8 @@ services:
       - ./frontend/.env
     depends_on:
       - backend
-    environment:
-      NEXT_PUBLIC_API_URL: "http://54.236.65.244:8000"
+    # environment:
+    #   NEXT_PUBLIC_API_URL: "http://54.236.65.244:8000"
       # NEXT_PUBLIC_API_URL: "http://backend:8000" # For internal communication
       # NEXT_PUBLIC_EXTERNAL_API_URL: "http://${HOST_IP}:8000" # For browser access
     ports:
