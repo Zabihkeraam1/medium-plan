@@ -19,6 +19,15 @@ jobs:
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
+          
+      - name: Copy nginx config
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_INSTANCE_IP }}
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "devops/craftapp.conf"
+          target: "/etc/nginx/sites-enabled"
 
       - name: Copy files via SSH
         uses: appleboy/scp-action@master
@@ -27,7 +36,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "./"
-          target: "/home/ubuntu/app"
+          target: "/home/ubuntu/app/medium-plan"
 
       - name: Install Docker Compose and deploy
         uses: appleboy/ssh-action@master
@@ -40,7 +49,7 @@ jobs:
             sudo mkdir -p /opt/medium-plan/postgres-data
             sudo chown -R 1000:1000 /opt/medium-plan/postgres-data
             sudo chmod -R 755 /opt/medium-plan
-            cd /home/ubuntu/app
+            cd /home/ubuntu/app/medium-plan
             sudo chmod +x ./init-db.sh
             ls -la frontend/ backend/
             # Set proper permissions (read-only for owner)
