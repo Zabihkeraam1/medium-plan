@@ -6,8 +6,8 @@ import asyncpg
 import asyncio
 import ssl
 # Load environment variables
-# load_dotenv()
-load_dotenv(dotenv_path="/app/.env")
+load_dotenv()
+# load_dotenv(dotenv_path="/app/.env")
 
 # Connect to the database
 async def connect_db():
@@ -58,7 +58,9 @@ async def root():
         "message": "🚀 Deployment Successful!",
         "status": "running",
         "timestamp": asyncio.get_event_loop().time(),  # Use directly without await
-        "origin": os.getenv("FRONTEND_DOMAIN")
+        "origin": os.getenv("FRONTEND_DOMAIN"),
+        "Database password": os.getenv("DB_PASSWORD"),
+        "Database name": os.getenv("DB_NAME")
     }
 
 @app.get("/data")
