@@ -34,9 +34,9 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    # environment:
-    #   DB_HOST: "postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}"
-    #   FRONTEND_DOMAIN: "http://54.236.65.244:3000"
+    environment:
+      # DB_HOST: "postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}"
+      FRONTEND_DOMAIN: "http://54.236.65.244:3000"
     ports:
       - "8000:8000"
     healthcheck:
