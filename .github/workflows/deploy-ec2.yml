@@ -50,7 +50,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "./"
-          target: "/home/ubuntu/app/medium-plan"
+          target: "/home/ubuntu/app"
 
       # - name: Install Docker Compose and deploy
       #   uses: appleboy/ssh-action@master
@@ -80,16 +80,15 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             set -e  # Exit immediately if any command fails
-            
-            # Set secure permissions for .env files
-            cd /home/ubuntu/app/medium-plan
-            sudo chmod 644 frontend/.env backend/.env
-            sudo chmod +x init-db.sh
-
             # Setup database directory
             sudo mkdir -p /opt/medium-plan/postgres-data
             sudo chown -R 1000:1000 /opt/medium-plan/postgres-data
             sudo chmod -R 755 /opt/medium-plan
+            # Set secure permissions for .env files
+            cd /home/ubuntu/app
+            sudo chmod +x init-db.sh
+            sudo chmod 644 frontend/.env
+            sudo chmod 644 backend/.env
             # Clean up and deploy with explicit env file
             docker-compose --env-file backend/.env down || true
             docker system prune -f
