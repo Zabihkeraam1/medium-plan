@@ -84,10 +84,9 @@ jobs:
             # Set secure permissions for .env files
             cd /home/ubuntu/app/medium-plan
             sudo chmod 644 frontend/.env backend/.env
-            chmod +x init-db.sh
+            sudo chmod +x init-db.sh
 
             # Setup database directory
-            sudo mkdir -p /opt/medium-plan/postgres-data
             sudo mkdir -p /opt/medium-plan/postgres-data
             sudo chown -R 1000:1000 /opt/medium-plan/postgres-data
             sudo chmod -R 755 /opt/medium-plan
