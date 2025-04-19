@@ -27,7 +27,19 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "devops/craftapp.conf"
-          target: "/etc/nginx/sites-enabled"
+          target: "/home/ubuntu/"
+
+      - name: Move nginx config with sudo
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_INSTANCE_IP }}
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            sudo mv /home/ubuntu/craftapp.conf /etc/nginx/sites-enabled/
+            sudo chown root:root /etc/nginx/sites-enabled/craftapp.conf
+            sudo chmod 644 /etc/nginx/sites-enabled/craftapp.conf
+            sudo systemctl reload nginx
 
       - name: Copy files via SSH
         uses: appleboy/scp-action@master
