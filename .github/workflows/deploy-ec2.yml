@@ -84,8 +84,6 @@ jobs:
             # Set secure permissions for .env files
             cd /home/ubuntu/app/medium-plan
             sudo chmod 644 frontend/.env backend/.env
-            cp backend/.env .
-            cp frontend/.env frontend/
             # Fix init-db.sh host reference
             sed -i 's/localhost/postgres/g' init-db.sh
             chmod +x init-db.sh
