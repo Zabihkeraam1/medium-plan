@@ -22,7 +22,7 @@ const Home = () => {
     console.log('Button clicked: ', process.env.NEXT_PUBLIC_API_URL)
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/data`)
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/data`)
       const data = await res.json() 
       setResponse(data.Date)
       console.log("data: ", data)
