@@ -41,7 +41,7 @@ echo "Writing nginx config..."
 sudo tee "$NGINX_CONF" > /dev/null <<EOF
 server {
     listen 443 ssl;
-    server_name $DOMAIN;
+    server_name 54.236.65.244;
 
     ssl_certificate $SSL_DIR/fullchain.pem;
     ssl_certificate_key $SSL_DIR/privkey.pem;
@@ -61,7 +61,7 @@ server {
 
 server {
     listen 80;
-    server_name $DOMAIN;
+    server_name 54.236.65.244;
     return 301 https://\$host\$request_uri;
 }
 EOF
