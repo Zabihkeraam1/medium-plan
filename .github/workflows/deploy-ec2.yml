@@ -7,7 +7,9 @@ on:
 env:
   DOCKER_COMPOSE_VERSION: 1.29.2
   PROJECT_NAME: "medium-plan"
-  PROJECT_PORT: "3000"
+  FRONTEND_PORT: 3000
+  BACKEND_PORT: 8000
+  DOMAIN: 54.236.65.244
   PROJECT_DIR: "/home/ubuntu/app/${PROJECT_NAME}"
   POSTGRES_DATA_DIR: "/opt/${PROJECT_NAME}/postgres-data"
 
@@ -46,18 +48,18 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             chmod +x "${{ env.PROJECT_DIR }}/devops/auto-deploy.sh"
-            "${{ env.PROJECT_DIR }}/devops/auto-deploy.sh" "${{ env.PROJECT_NAME }}" "${{ env.PROJECT_PORT }}"
+            "${{ env.PROJECT_DIR }}/devops/auto-deploy.sh" "${{ env.PROJECT_NAME }}" "${{ env.FRONTEND_PORT }}" "${{ env.BACKEND_PORT }}" "${{ env.DOMAIN }}"
 
-      - name: Copy nginx config
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.EC2_INSTANCE_IP }}
-          username: ubuntu
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "devops/craftapp.conf"
-          target: "/home/ubuntu/"
-          strip_components: 1
-          tar_tmp_path: ""
+      # - name: Copy nginx config
+      #   uses: appleboy/scp-action@master
+      #   with:
+      #     host: ${{ secrets.EC2_INSTANCE_IP }}
+      #     username: ubuntu
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     source: "devops/craftapp.conf"
+      #     target: "/home/ubuntu/"
+      #     strip_components: 1
+      #     tar_tmp_path: ""
 
       - name: Move nginx config with sudo
         uses: appleboy/ssh-action@master
@@ -66,9 +68,9 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            sudo mv /home/ubuntu/craftapp.conf /etc/nginx/sites-enabled/
-            sudo chown root:root /etc/nginx/sites-enabled/craftapp.conf
-            sudo chmod 644 /etc/nginx/sites-enabled/craftapp.conf
+            # sudo mv /home/ubuntu/craftapp.conf /etc/nginx/sites-enabled/
+            # sudo chown root:root /etc/nginx/sites-enabled/craftapp.conf
+            # sudo chmod 644 /etc/nginx/sites-enabled/craftapp.conf
             sudo nginx -t && sudo systemctl reload nginx
 
 
