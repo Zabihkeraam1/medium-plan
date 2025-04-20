@@ -82,5 +82,5 @@ volumes:
       device: /opt/${PROJECT_NAME}/postgres-data
       o: bind
 networks:
-  app-network:
+  ${PROJECT_NAME}-app-network:
     driver: bridge
