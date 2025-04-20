@@ -55,7 +55,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "./"
-          target: "/home/ubuntu/app/${PROJECT_NAME}"
+          target: "/home/ubuntu/app/medium-plan"
 
       - name: Deploy application
         uses: appleboy/ssh-action@master
@@ -63,17 +63,14 @@ jobs:
           host: ${{ secrets.EC2_INSTANCE_IP }}
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          envs: '["PROJECT_NAME"]'  # Explicitly pass this env var
           script: |
             set -e  # Exit immediately if any command fails
-            # Export variables for the remote session
-            export PROJECT_NAME="$PROJECT_NAME"
             # Setup database directory
-            sudo mkdir -p /opt/${PROJECT_NAME}/postgres-data
-            sudo chown -R 1000:1000 /opt/${PROJECT_NAME}/postgres-data
-            sudo chmod -R 755 /opt/${PROJECT_NAME}
+            sudo mkdir -p /opt/medium-plan/postgres-data
+            sudo chown -R 1000:1000 /opt/medium-plan/postgres-data
+            sudo chmod -R 755 /opt/medium-plan
             # Set secure permissions for .env files
-            cd /home/ubuntu/app/${PROJECT_NAME}
+            cd /home/ubuntu/app/medium-plan
             sudo chmod +x init-db.sh
             sudo chmod 644 frontend/.env
             sudo chmod 644 backend/.env
