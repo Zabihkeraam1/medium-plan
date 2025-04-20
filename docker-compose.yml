@@ -1,5 +1,9 @@
 version: "3.8"
 
+x-environment: &default-vars
+  PROJECT_NAME: "medium-plan"
+  POSTGRES_DATA_DIR: "/opt/${PROJECT_NAME}/postgres-data"
+  
 services:
   postgres:
     networks:
@@ -26,6 +30,7 @@ services:
           memory: 512M
 
   backend:
+    <<: *default-vars
     networks:
       - app-network
     build: ./backend
@@ -38,7 +43,7 @@ services:
         condition: service_healthy
     environment:
       # DB_HOST: "postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}"
-      FRONTEND_DOMAIN: "http://54.236.65.244:3000"
+      FRONTEND_DOMAIN: "${FRONTEND_DOMAIN}"
     ports:
       - "8000:8000"
     healthcheck:
@@ -54,6 +59,7 @@ services:
     restart: unless-stopped
 
   frontend:
+    <<: *default-vars
     networks:
       - app-network
     build: ./frontend
@@ -79,7 +85,7 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /opt/medium-plan/postgres-data
+      device: ${POSTGRES_DATA_DIR}
       o: bind
 networks:
   app-network:
