@@ -34,7 +34,7 @@ jobs:
           script: |
             set -e
             # 1. Setup SSL directory
-            SSL_DIR="/etc/nginx/ssl/${PROJECT_NAME}"
+            SSL_DIR="/etc/nginx/ssl/medium-plan"
             sudo mkdir -p "$SSL_DIR"
             
             # 2. Generate self-signed cert for IP
@@ -53,8 +53,8 @@ jobs:
                 listen 443 ssl;
                 server_name 54.236.65.244;
       
-                ssl_certificate /etc/nginx/ssl/${PROJECT_NAME}/fullchain.pem;
-                ssl_certificate_key /etc/nginx/ssl/${PROJECT_NAME}/privkey.pem;
+                ssl_certificate /etc/nginx/ssl/medium-plan/fullchain.pem;
+                ssl_certificate_key /etc/nginx/ssl/medium-plan/privkey.pem;
       
                 ssl_protocols TLSv1.2 TLSv1.3;
                 ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256';
