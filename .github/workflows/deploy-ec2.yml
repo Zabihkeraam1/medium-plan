@@ -13,6 +13,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        
+      - name: Load environment variables
+        uses: falti/dotenv-action@v1
+        with:
+          env-file: .env
 
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
@@ -50,7 +55,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "./"
-          target: "/home/ubuntu/app/medium-plan"
+          target: "/home/ubuntu/app/${PROJECT_NAME}"
 
       - name: Deploy application
         uses: appleboy/ssh-action@master
@@ -61,11 +66,11 @@ jobs:
           script: |
             set -e  # Exit immediately if any command fails
             # Setup database directory
-            sudo mkdir -p /opt/medium-plan/postgres-data
-            sudo chown -R 1000:1000 /opt/medium-plan/postgres-data
-            sudo chmod -R 755 /opt/medium-plan
+            sudo mkdir -p /opt/${PROJECT_NAME}/postgres-data
+            sudo chown -R 1000:1000 /opt/${PROJECT_NAME}/postgres-data
+            sudo chmod -R 755 /opt/${PROJECT_NAME}
             # Set secure permissions for .env files
-            cd /home/ubuntu/app/medium-plan
+            cd /home/ubuntu/app/${PROJECT_NAME}
             sudo chmod +x init-db.sh
             sudo chmod 644 frontend/.env
             sudo chmod 644 backend/.env
