@@ -3,7 +3,9 @@ version: "3.8"
 services:
   postgres:
     networks:
-      - app-network
+      - ${PROJECT_NAME}-app-network
+    env_file:
+      - ./backend/.env
     image: postgres:15-alpine
     environment:
       POSTGRES_USER: "${DB_USER}"
@@ -25,7 +27,7 @@ services:
 
   backend:
     networks:
-      - app-network
+      - ${PROJECT_NAME}-app-network
     build: ./backend
     volumes:
       - ./backend/.env:/app/.env
@@ -53,7 +55,7 @@ services:
 
   frontend:
     networks:
-      - app-network
+      - ${PROJECT_NAME}-app-network
     build: ./frontend
     env_file:
       - ./frontend/.env
@@ -77,7 +79,7 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /opt/medium-plan/postgres-data
+      device: /opt/${PROJECT_NAME}/postgres-data
       o: bind
 networks:
   app-network:
