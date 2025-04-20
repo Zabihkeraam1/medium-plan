@@ -38,7 +38,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "./"
-          target:  "/home/ubuntu/app/${{ env.PROJECT_NAME }}"
+          target:  "${{ env.PROJECT_DIR }}"
 
       - name: Run auto-deploy.sh on EC2
         uses: appleboy/ssh-action@master
