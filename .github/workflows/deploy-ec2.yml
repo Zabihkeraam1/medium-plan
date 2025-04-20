@@ -63,8 +63,11 @@ jobs:
           host: ${{ secrets.EC2_INSTANCE_IP }}
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          envs: '["PROJECT_NAME"]'  # Explicitly pass this env var
           script: |
             set -e  # Exit immediately if any command fails
+            # Export variables for the remote session
+            export PROJECT_NAME="$PROJECT_NAME"
             # Setup database directory
             sudo mkdir -p /opt/${PROJECT_NAME}/postgres-data
             sudo chown -R 1000:1000 /opt/${PROJECT_NAME}/postgres-data
