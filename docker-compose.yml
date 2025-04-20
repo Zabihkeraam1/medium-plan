@@ -79,7 +79,7 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /opt/${PROJECT_NAME}/postgres-data
+      device: /opt/medium-plan/postgres-data
       o: bind
 networks:
   app-network:
